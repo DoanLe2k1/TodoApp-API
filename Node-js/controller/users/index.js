@@ -24,7 +24,7 @@ function updateUsers(req, res) {
 function deleteUsers(req, res) {
     res.end('Delete User Succesfully')
 }
-const loginUsers= async (req, res) => {
+const loginUsers = async (req, res) => {
     const body = await getDataFromRequest(req)
     if (!body) {
         res.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
@@ -37,7 +37,7 @@ const loginUsers= async (req, res) => {
         const loginData = body;
         const message = await login(loginData)
         res.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-        res.end( );
+        res.end(message);
       }
 
 }

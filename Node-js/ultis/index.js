@@ -1,3 +1,9 @@
+const fs = require('fs');
+
+const writeDataToFile = (fileName, data) => {
+  fs.writeFileSync(fileName, data, 'utf-8', (error) => console.log(error));
+};
+
 const httpStatusCode = {
     OK:200,
     ERROR:404
@@ -13,6 +19,14 @@ const getDataFromRequest = (req) => {
         resolve(JSON.parse(body));
       });
     });
-  };
+};
 
-module.exports = {getDataFromRequest, httpStatusCode}
+const generateUID = () => {
+  return Date.now() .toString( 36 )  + Math.random() .toString( 36 ) .substring( 2, 11 ) ;
+
+}
+
+
+
+
+module.exports = {getDataFromRequest, httpStatusCode,generateUID,writeDataToFile}

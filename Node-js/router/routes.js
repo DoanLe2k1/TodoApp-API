@@ -5,8 +5,9 @@ module.exports = {
       value: "/users/login"
     }
   },
+
   task: {
-    value: "/tasks",
+    value: "/task",
   },
   
 };

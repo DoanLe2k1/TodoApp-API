@@ -1,10 +1,10 @@
 var routerMethods = require("../methods");
 
 var routes = require("../routes.js");
-var getTasks  = require("../../controller/tasks/index.js");
+const addTask  = require("../../controller/tasks/index.js");
   var taskRouter = {
   run(req, res) {
-    routerMethods.get(req, res, routes.user.value, getTasks);
+    routerMethods.post(req, res, routes.task.value, addTask);
   },
 };
 module.exports = taskRouter;
