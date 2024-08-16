@@ -13,4 +13,11 @@ const addNewTask = (data) => {
     })
 }
 
-module.exports = {addNewTask}
+const getAllTask = () => {
+    return new Promise((resolve,reject) => {
+        resolve(tasks)
+    })
+
+}
+
+module.exports = {addNewTask,getAllTask}

@@ -35,9 +35,18 @@ const loginUsers = async (req, res) => {
         );
       } else {
         const loginData = body;
-        const message = await login(loginData)
-        res.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-        res.end(message);
+        const token = await login(loginData)
+        if(token) {
+
+          const message = 'Login Success'
+          res.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
+          res.end(`${token} ${message}`);
+        }
+        else {
+          res.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
+          res.end(
+          JSON.stringify({message: 'Wrong user or password'})
+        )}
       }
 
 }
