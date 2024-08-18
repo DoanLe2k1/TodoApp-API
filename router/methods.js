@@ -19,6 +19,11 @@ var routerMethods = {
             callback(req, res);
         }
     },
+    options: function (req, res, path, callback) {
+        if (path === req.url && req.method === "OPTIONS") {
+            callback(req, res);
+        }
+    },
 };
 
 module.exports = routerMethods;

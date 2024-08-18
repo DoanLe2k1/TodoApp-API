@@ -26,7 +26,4 @@ const generateUID = () => {
 
 }
 
-
-
-
 module.exports = {getDataFromRequest, httpStatusCode,generateUID,writeDataToFile}
