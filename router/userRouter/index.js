@@ -1,12 +1,11 @@
-var routerMethods = require("../methods.js");
-
-var routes = require("../routes.js");
+var routerMethods = require('../methods.js');
+var routes = require('../routes.js');
 const { 
   getUsers, 
   addUsers, 
   updateUsers, 
   deleteUsers,
-  loginUsers } = require("../../controller/users/index.js");
+  loginUsers } = require('../../controller/users/index.js');
 
   var userRouter = {
   run(req, res) {

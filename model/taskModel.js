@@ -1,5 +1,5 @@
 const tasks = require('../database/todoTask.json');
-const {generateUID,writeDataToFile} = require('../ultis/index.js')
+const { generateUID, writeDataToFile } = require('../ultis/index.js')
 const addNewTask = (data) => {
     const newTask = {
         id: generateUID(),

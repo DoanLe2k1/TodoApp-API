@@ -1,21 +1,21 @@
 var routerMethods = {
     get: function (req, res, path, callback) {
-        if (path === req.url && req.method === "GET") {
+        if (path === req.url && req.method === 'GET') {
             callback(req, res);
         }
     },
     post: function (req, res, path, callback) {
-        if (path === req.url && req.method === "POST") {
+        if (path === req.url && req.method === 'POST') {
             callback(req, res);
         }
     },
     put: function (req, res, path, callback) {
-        if (path === req.url && req.method === "PUT") {
+        if (path === req.url && req.method === 'PUT') {
             callback(req, res);
         }
     },
     delete: function (req, res, path, callback) {
-        if (path === req.url && req.method === "DELETE") {
+        if (path === req.url && req.method === 'DELETE') {
             callback(req, res);
         }
     },

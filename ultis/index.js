@@ -5,8 +5,8 @@ const writeDataToFile = (fileName, data) => {
 };
 
 const httpStatusCode = {
-    OK:200,
-    ERROR:404
+    OK: 200,
+    ERROR: 404
 }
 
 const getDataFromRequest = (req) => {

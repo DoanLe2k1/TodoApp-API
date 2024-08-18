@@ -1,5 +1,5 @@
-const {login} = require('../../model/usersModel.js')
-const {httpStatusCode} =require('../../ultis/index.js')
+const { login } = require('../../model/usersModel.js')
+const { httpStatusCode } = require('../../ultis/index.js')
 const getDataFromRequest = (req) => {
     return new Promise((resolve, reject) => {
       let body = '';
@@ -38,9 +38,9 @@ const loginUsers = async (req, res) => {
         const token = await login(loginData)
         if(token) {
 
-          const message = 'Login Success'
+          const message = 'Login Success!'
           res.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-          res.end(`${token} ${message}`);
+          res.end(`${message} Your token is: ${token}`);
         }
         else {
           res.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });

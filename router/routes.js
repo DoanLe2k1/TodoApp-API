@@ -1,13 +1,13 @@
 module.exports = {
   user: {
-    value: "/users",
+    value: '/users',
     userLogin: {
-      value: "/users/login"
+      value: '/users/login'
     }
   },
 
   task: {
-    value: "/task",
+    value: '/task',
   },
   
 };

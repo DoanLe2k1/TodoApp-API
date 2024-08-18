@@ -1,5 +1,5 @@
-const {addNewTask,getAllTask} = require('../../model/taskModel.js')
-const {httpStatusCode,getDataFromRequest} =require('../../ultis/index.js')
+const { addNewTask,getAllTask } = require('../../model/taskModel.js')
+const { httpStatusCode, getDataFromRequest } =require('../../ultis/index.js')
 
 // const fixPreflight = (req,res) => {
 //   res.end()
