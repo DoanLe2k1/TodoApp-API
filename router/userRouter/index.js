@@ -1,4 +1,4 @@
-var routerMethods = require("../methods");
+var routerMethods = require("../methods.js");
 
 var routes = require("../routes.js");
 const { 
