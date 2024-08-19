@@ -13,6 +13,7 @@ const addTask = async(request, response) => {
         response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
         response.end( JSON.stringify({ message: 'No Data received to add task'}));
       } else {
+        body = {...body, token}
         const message = await addNewTask(body)   
         response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify(message));
@@ -42,11 +43,12 @@ const getTasks = async(request,response) => {
 const deleteTask = async (request, response) => {
   const token = request.headers['authorization']
   if (token) {
-    const body = await getDataFromRequest(request)
+    let body = await getDataFromRequest(request)
     if (!body) {
       response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
       response.end( JSON.stringify({ message: 'No Data received to delete task'}));
     } else {
+      body = {...body, token}
       const message = await deleteTaskModel(body)   
       response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify(message));
@@ -68,6 +70,7 @@ const editTask = async (request, response) => {
       response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
       response.end( JSON.stringify({ message: 'No Data received to edit task'}));
     } else {
+      body = {...body, token}
       const message = await editTaskModel(body)   
       response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify(message));
@@ -84,11 +87,12 @@ const editTask = async (request, response) => {
 const toggleTask = async (request,response) => {
   const token = request.headers['authorization']
   if (token) {
-    const body = await getDataFromRequest(request)
+    let body = await getDataFromRequest(request)
     if (!body) {
       response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
       response.end( JSON.stringify({ message: 'No Data received to edit task'}));
     } else {
+      body = {...body, token}
       const message = await toggleTaskModel(body)   
       response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify(message));

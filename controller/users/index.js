@@ -1,4 +1,4 @@
-const {loginUserModel, getUsersModel, addUserModel, checkUserExistModel} = require('../../model/usersModel.js')
+const {loginUserModel, getUsersModel, addUserModel} = require('../../model/usersModel.js')
 const { httpStatusCode, getDataFromRequest } = require('../../ultis/index.js')
 
 async function getUsers(request, response) {
@@ -12,12 +12,6 @@ async function addUser(request, response) {
     response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
     response.end( JSON.stringify({ message: 'No Data received to add task'}));
   } else {
-    const isValid = await checkUserExistModel(body);
-    if(isValid) {
-      response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-      response.end(JSON.stringify('Already have this email registered!'))
-    }
-    else {
       const message = await addUserModel(body);
       if (message) {
         response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
@@ -26,7 +20,7 @@ async function addUser(request, response) {
     }
   }
 
-}
+
 function updateUsers(req, res) {
     res.end('Update User Succesfully');
 }

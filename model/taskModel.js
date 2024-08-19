@@ -1,72 +1,86 @@
 let tasks = require('../database/todoTask.json');
-const { generateUID, writeDataToFile } = require('../ultis/index.js')
+const { generateUID, writeDataToFile, urlAPI } = require('../ultis/index.js');
 const addNewTask = (data) => {
-    const newTask = {
-        id: generateUID(),
-        name: data.name,
-        user_id: data.user_id,
-        completed: data.completed
-    }
-    return new Promise((resolve,reject) => {
-        tasks.unshift(newTask)
-        writeDataToFile('./database/todoTask.json', JSON.stringify(tasks));
-        resolve(newTask)
-    })
-}
+	const newTask = {
+		id: generateUID(),
+		name: data.name,
+		user_id: data.user_id,
+		completed: data.completed,
+	};
+	return new Promise((resolve, reject) => {
+		const response = fetch(`${urlAPI}/tasks`, {
+			method: 'POST',
+			headers: {
+				Authorization: JSON.stringify(data.token),
+			},
+			body: JSON.stringify(newTask),
+		});
+		resolve(response);
+
+	});
+};
 
 const getAllTask = () => {
-    return new Promise((resolve,reject) => {
-        resolve(tasks)
-    })
+	return new Promise((resolve, reject) => {
+		const response = fetch(`${urlAPI}/tasks`, {
+			method: 'GET',
+			headers: {},
+		});
+		resolve(tasks);
+	});
+};
 
-}
-
-const deleteTaskModel = (id) => {
-    console.log(id);
-    return new Promise((resolve, reject) => {
-        const updatedlistTasks = tasks.filter((task) => task.id !== id);
-        tasks = updatedlistTasks
-        writeDataToFile('./database/todoTask.json', JSON.stringify(tasks))
-        const message ='Delete success'
-        resolve(message)
-    })
-}
+const deleteTaskModel = (data) => {
+	console.log(data.id);
+	return new Promise((resolve, reject) => {
+		const response = fetch(`${urlAPI}/tasks`, {
+			method: 'DELETE',
+			header: {
+				Authorization: JSON.stringify(data.token),
+			},
+			body: JSON.stringify(data.id),
+		});
+		resolve(response);
+	});
+};
 
 const editTaskModel = async (data) => {
-    console.log(data);
-    return new Promise((resolve, reject) => {
-        const task = tasks.find((task) => task.id === data.id);
-        task.name = data.name
-        writeDataToFile('./database/todoTask.json', JSON.stringify(tasks))
-        const message ='edit success'
-        resolve(message)
-    })
-}
+	return new Promise((resolve, reject) => {
+		const response = fetch(`${urlAPI}/tasks`, {
+			method: 'PUT',
+			header: {
+				Authorization: JSON.stringify(data.token),
+			},
+			body: JSON.stringify(data),
+		});
+		resolve(response);
+	});
+};
 
 const filterState = {
-    DONE: 'done',
-    UNDONE: 'undone',
-    ALL: 'all'
-  }
+	DONE: 'done',
+	UNDONE: 'undone',
+	ALL: 'all',
+};
 
-const toggleTaskModel = async(data) => {
-    return new Promise((resolve, reject) => {
-        const task = tasks.find((task) => task.id === data);
-        if (task.completed === filterState.UNDONE) {
-            task.completed = filterState.DONE
-        } else {
-            task.completed = filterState.UNDONE
-        }
-        writeDataToFile('./database/todoTask.json', JSON.stringify(tasks))
-        const message = 'toggle success'
-        resolve(message)
-    })
-}
+const toggleTaskModel = async (data) => {
+	return new Promise((resolve, reject) => {
+		const response = fetch(`${urlAPI}/tasks`, {
+			method: 'PUT',
+			header: {
+				Authorization: JSON.stringify(data.token),
+			},
+			body: JSON.stringify(data),
+		});
+		resolve(response);
+        
+	});
+};
 
 module.exports = {
-    addNewTask,
-    getAllTask,
-    deleteTaskModel,
-    editTaskModel,
-    toggleTaskModel
-}
+	addNewTask,
+	getAllTask,
+	deleteTaskModel,
+	editTaskModel,
+	toggleTaskModel,
+};
