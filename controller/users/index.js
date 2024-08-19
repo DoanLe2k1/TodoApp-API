@@ -1,30 +1,39 @@
-const { login } = require('../../model/usersModel.js')
-const { httpStatusCode } = require('../../ultis/index.js')
-const getDataFromRequest = (req) => {
-    return new Promise((resolve, reject) => {
-      let body = '';
-      req.on('data', (chunk) => {
-        body += chunk.toString();
-      });
-      req.on('end', () => {
-        resolve(JSON.parse(body));
-      });
-    });
-  };
+const {loginUserModel, getUsersModel, addUserModel, checkUserExistModel} = require('../../model/usersModel.js')
+const { httpStatusCode, getDataFromRequest } = require('../../ultis/index.js')
 
-function getUsers(req, res) {
-    res.end('Get User Succesfully');
+async function getUsers(request, response) {
+  const users = await getUsersModel()   
+  response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
+  response.end(JSON.stringify(users));
 }
-function addUsers(req, res) {
-    res.end('Add User Succesfully');
+async function addUser(request, response) {
+  const body = await getDataFromRequest(request)
+  if (!body) {
+    response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
+    response.end( JSON.stringify({ message: 'No Data received to add task'}));
+  } else {
+    const isValid = await checkUserExistModel(body);
+    if(isValid) {
+      response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify('Already have this email registered!'))
+    }
+    else {
+      const message = await addUserModel(body);
+      if (message) {
+        response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
+        response.end(JSON.stringify('Add user successfully!'));
+      }
+    }
+  }
+
 }
 function updateUsers(req, res) {
     res.end('Update User Succesfully');
 }
 function deleteUsers(req, res) {
-    res.end('Delete User Succesfully')
+    res.end(JSON.stringify({message: 'Delete User Succesfully'}))
 }
-const loginUsers = async (req, res) => {
+const loginUser = async (req, res) => {
     const body = await getDataFromRequest(req)
     if (!body) {
         res.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
@@ -35,17 +44,15 @@ const loginUsers = async (req, res) => {
         );
       } else {
         const loginData = body;
-        const token = await login(loginData)
-        if(token) {
-
-          const message = 'Login Success!'
+        const result = await loginUserModel(loginData)
+        if(result) {
           res.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-          res.end(`${message} Your token is: ${token}`);
+          res.end(JSON.stringify(result));
         }
         else {
-          res.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
+          res.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
           res.end(
-          JSON.stringify({message: 'Wrong user or password'})
+          JSON.stringify('Wrong user or password')
         )}
       }
 
@@ -53,9 +60,9 @@ const loginUsers = async (req, res) => {
 
 module.exports = { 
     getUsers, 
-    addUsers, 
+    addUser, 
     updateUsers, 
     deleteUsers,
-    loginUsers
+    loginUser
 };
 

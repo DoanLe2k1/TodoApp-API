@@ -8,6 +8,9 @@ module.exports = {
 
   task: {
     value: '/task',
+    toggleTask: {
+      value: '/task/toggle-task'
+    }
   },
   
 };
