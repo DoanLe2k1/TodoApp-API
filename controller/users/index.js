@@ -1,24 +1,24 @@
-const {loginUserModel, getUsersModel, addUserModel} = require('../../model/usersModel.js')
-const { httpStatusCode, getDataFromRequest } = require('../../ultis/index.js')
+const {httpStatusCode, getDataFromRequest,urlAPI } = require('../../ultis/index.js')
 
 async function getUsers(request, response) {
-  const users = await getUsersModel()   
   response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
-  response.end(JSON.stringify(users));
+  response.end('Get User');
 }
+
+
 async function addUser(request, response) {
   const body = await getDataFromRequest(request)
-  if (!body) {
-    response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
-    response.end( JSON.stringify({ message: 'No Data received to add task'}));
+  const result = await fetch(`${urlAPI}/api/users` , {
+    method: 'POST',
+    body: JSON.stringify(body)
+  })
+  if (!result.ok) {
+    throw new Error('Network result was not ok');
   } else {
-      const message = await addUserModel(body);
-      if (message) {
-        response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify('Add user successfully!'));
-      }
-    }
+    response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
+    response.end(JSON.stringify(await result.json()))
   }
+}
 
 
 function updateUsers(req, res) {
@@ -27,29 +27,18 @@ function updateUsers(req, res) {
 function deleteUsers(req, res) {
     res.end(JSON.stringify({message: 'Delete User Succesfully'}))
 }
-const loginUser = async (req, res) => {
-    const body = await getDataFromRequest(req)
-    if (!body) {
-        res.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
-        res.end(
-          JSON.stringify({
-            message: 'No Data received to login',
-          })
-        );
-      } else {
-        const loginData = body;
-        const result = await loginUserModel(loginData)
-        if(result) {
-          res.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(result));
-        }
-        else {
-          res.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-          res.end(
-          JSON.stringify('Wrong user or password')
-        )}
-      }
-
+const loginUser = async (request, response) => {
+    const body = await getDataFromRequest(request)
+    const result = await fetch(`${urlAPI}/api/users/login`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    })
+    if (!result.ok) {
+      throw new Error('Network result was not ok');
+    } else {
+      response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify(await result.json()))
+    }
 }
 
 module.exports = { 

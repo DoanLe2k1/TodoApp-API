@@ -1,109 +1,86 @@
-const { addNewTask,getAllTask, deleteTaskModel, editTaskModel, toggleTaskModel} = require('../../model/taskModel.js')
-const { httpStatusCode, getDataFromRequest } =require('../../ultis/index.js')
+const { httpStatusCode, getDataFromRequest,urlAPI } =require('../../ultis/index.js')
 
-// const fixPreflight = (req,res) => {
-//   res.end()
-// } 
-
-const addTask = async(request, response) => {
-    const token = request.headers['authorization']
-    if(token) {
-      const body = await getDataFromRequest(request)
-      if (!body) {
-        response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
-        response.end( JSON.stringify({ message: 'No Data received to add task'}));
-      } else {
-        body = {...body, token}
-        const message = await addNewTask(body)   
-        response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify(message));
-      }
-
-    } else {
-      response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
-      response.end( JSON.stringify({ message: 'NO TOKENNNNNN'}));
-    }
+const addTask = async (request, response) => {
+  const body = await getDataFromRequest(request)
+  const result = await fetch(`${urlAPI}/api/tasks`, {
+    method: 'POST',
+    headers: {
+      Authorization: JSON.stringify(request.headers['authorization']),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!result.ok) {
+    throw new Error('Network result was not ok');
+  } else {
+    response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify(await result.json()))
+  }
 }
 
-const getTasks = async(request,response) => {
-  const token = request.headers['authorization']
-  if (token) {
-    const tasks = await getAllTask()   
-    response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
-    response.end(JSON.stringify(tasks));
+const getTasks = async (request,response) => {
+  const result = await fetch(`${urlAPI}/api/tasks`, {
+    method: 'GET',
+    headers: {
+      Authorization: JSON.stringify(request.headers['authorization']),
+    },
+  });
+  if (!result.ok) {
+    throw new Error('Network result was not ok');
   } else {
-    response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
-    response.end(
-    JSON.stringify({
-      message: 'NO TOKENNNNNN',
-    })
-  )}
+    response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify(await result.json()))
+  }
 }
 
 const deleteTask = async (request, response) => {
-  const token = request.headers['authorization']
-  if (token) {
-    let body = await getDataFromRequest(request)
-    if (!body) {
-      response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
-      response.end( JSON.stringify({ message: 'No Data received to delete task'}));
-    } else {
-      body = {...body, token}
-      const message = await deleteTaskModel(body)   
-      response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-      response.end(JSON.stringify(message));
-    }
+  const body = await getDataFromRequest(request)
+  const result = await fetch(`${urlAPI}/api/tasks`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: JSON.stringify(request.headers['authorization']),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!result.ok) {
+    throw new Error('Network result was not ok');
   } else {
     response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
-    response.end(
-    JSON.stringify({
-      message: 'NO TOKENNNNNN',
-    })
-  )}
+    response.end(JSON.stringify(await result.json()))
+  }
 }
 
 const editTask = async (request, response) => {
-  const token = request.headers['authorization']
-  if (token) {
-    const body = await getDataFromRequest(request)
-    if (!body) {
-      response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
-      response.end( JSON.stringify({ message: 'No Data received to edit task'}));
-    } else {
-      body = {...body, token}
-      const message = await editTaskModel(body)   
-      response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-      response.end(JSON.stringify(message));
-    }
+  const body = await getDataFromRequest(request)
+  const result = await fetch(`${urlAPI}/api/tasks`, {
+    method: 'PUT',
+    headers: {
+      Authorization: JSON.stringify(request.headers['authorization']),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!result.ok) {
+    throw new Error('Network result was not ok');
   } else {
     response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
-    response.end(
-    JSON.stringify({
-      message: 'NO TOKENNNNNN',
-    })
-  )}
+    response.end(JSON.stringify(await result.json()))
+  }
 }
 
-const toggleTask = async (request,response) => {
-  const token = request.headers['authorization']
-  if (token) {
-    let body = await getDataFromRequest(request)
-    if (!body) {
-      response.writeHead(httpStatusCode.ERROR, { 'Content-Type': 'application/json' });
-      response.end( JSON.stringify({ message: 'No Data received to edit task'}));
-    } else {
-      body = {...body, token}
-      const message = await toggleTaskModel(body)   
-      response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-      response.end(JSON.stringify(message));
-    }
+const toggleTask = async (request, response) => {
+  const body = await getDataFromRequest(request)
+  const result = await fetch(`${urlAPI}/api/tasks/toggle-task`, {
+    method: 'PUT',
+    headers: {
+      Authorization: JSON.stringify(request.headers['authorization']),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!result.ok) {
+    throw new Error('Network result was not ok');
   } else {
     response.writeHead(httpStatusCode.OK, {'Content-Type': 'application/json'});
-    response.end(
-    JSON.stringify({
-      message: 'NO TOKENNNNNN',
-    })
-  )}
+    response.end(JSON.stringify(await result.json()))
+  }
 }
 
 
