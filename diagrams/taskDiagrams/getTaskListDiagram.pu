@@ -1,0 +1,48 @@
+@startuml
+title Get Tasks List Diagram
+skinparam titleFontSize 60
+|Router|
+start
+repeat: Received request
+
+if (request.url === "/tasks"?) then (false)
+    :Response status code:
+    **404 (NOT_FOUND)**;
+    stop
+else (true)
+    if (request.method === "GET"?) then (false)
+        :Response status code:
+        **405 (METHOD_NOT_ALLOWED)**;
+        stop
+    else (true)
+        |Controller|
+        :Received request from Router;
+        :Execute **getTasks()** function;
+
+        if (Input validation success?) then (false)
+            :Response status code:
+            **400 (BAD_REQUEST)**;
+            'Validation failed
+            stop
+        else (true)
+            |Database|
+            if (Task exists in Database?) then (false)
+                |Controller|
+                :Response status code:
+                **204 (NO_CONTENT)**;
+                note left: No tasks available
+                stop
+            else (true)
+                |Controller|
+                :Response status code:
+                **200 (OK)**;
+                :Return task list;
+            endif
+        endif
+    endif
+endif
+
+|Router|
+backward: Continue listening for requests;
+repeat while (Listen to request)
+@enduml

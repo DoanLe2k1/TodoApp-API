@@ -1,25 +1,26 @@
 @startuml
+title Usecase Diagram TodoApp
 left to right direction
 actor "User" as user
 rectangle TodoApp {
-  usecase "Logout" as logout
+  usecase "Register" as register
+  usecase "Login" as login
   usecase "Filter Task" as filter
   usecase "Complete Task" as completeTask
   usecase "Delete Task" as deleteTask
   usecase "Edit Task" as editTask
   usecase "View Task List" as viewTask
   usecase "Creat Task" as createTask
-  usecase "Login" as login
-  usecase "Register" as register
+  usecase "Logout" as logout
 }
-user --> logout
+user --> register
+user --> login
 user --> filter
 user --> completeTask
 user --> deleteTask
 user --> editTask
 user --> viewTask
 user --> createTask
-user --> login
-user --> register
+user --> logout
 @enduml
 
