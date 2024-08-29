@@ -1,13 +1,21 @@
 module.exports = {
-  user: {
-    value: "/users",
-    userLogin: {
-      value: "/users/login"
-    }
-  },
+	user: {
+		value: '/users',
+		userLogin: {
+			value: '/users/login',
+		},
+		userLogout: {
+			value: '/users/logout',
+		},
+	},
 
-  task: {
-    value: "/task",
-  },
-  
+	task: {
+		value: '/tasks',
+		toggleTask: {
+			value: '/tasks/toggle-task',
+		},
+		deleteAllTasks: {
+			value: '/tasks/delete-all-tasks',
+		},
+	},
 };

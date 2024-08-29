@@ -1,0 +1,42 @@
+@startuml
+| Router |
+start
+repeat: Receive request
+if (Check request.url === "/task/:id") then (false)
+    :Response status code: error 404 (not found);
+else (true)
+    if (Check request.method === "PUT") then (false)
+        :Response status code: error 405 (method not allowed);
+    else (true)
+        | Controller |
+        :Receive request from router;
+        :Token is taken from request.headers['data'];
+        if (Is token valid?) then (false)
+            :Return status code error and require token;
+        else (true)
+            :Get task ID from request;
+            if (Is task ID valid) then (false)
+                :Response status code: error 404 (not found);
+            else (true)
+                | Task Model |
+                :Recieved task ID form controller;
+                :Request data from database;
+                | Database |
+                :Recieved request from task model;
+                :Response task property data to task model;
+                | Task Model |
+                :Recieved data;
+                :Transfering data to controller;
+                | Controller |
+                :Update new value for property name;
+                :Save change;
+                :Response status code 200 (OK);
+                
+            endif
+        endif
+    endif
+endif
+| Router |
+backward: continue listen request;
+repeat while (listen to request)
+@enduml
