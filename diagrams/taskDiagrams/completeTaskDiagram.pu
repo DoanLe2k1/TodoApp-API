@@ -1,0 +1,62 @@
+@startuml 
+title  Complete Task Diagram (Toggle Task)
+skinparam titleFontSize 60
+|Router|
+start
+repeat: Received request
+if (request.url === "/tasks/toggle-task/:id"?) then (false)
+    :Response status code:
+    **404 (NOT_FOUND)**;
+    stop
+
+else (true)
+    if (request.method === "PATCH"?) then (false)
+        :Response status code:
+        **405 (METHOD_NOT_ALLOWED)**;
+        stop
+
+    else (true)
+        |Controller|
+        :Receive toggle task status request from Router;
+        :Execute **toggleTask()** function;
+
+        if (Input validation success?) then (false)
+            :Response status code:
+            **400 (BAD_REQUEST)**;
+            'Validation failed
+            stop
+
+        else (true)
+            |Database|
+            :Query task by ID from Database;
+
+            if (Task found?) then (false)
+                |Controller|
+                :Response status code:
+                **404 (NOT_FOUND)**;
+                note left: Task not found
+                stop
+            
+            else (true)
+                |Database|
+                if (Task is complete?) then (false)
+                    :Update task status to complete;
+                
+                else (true)
+                    :Update task status to incomplete;
+
+                endif
+                :Return success response;
+                |Controller|
+                :Response status code:
+                **200 (OK)**;
+
+            endif
+        endif
+    endif
+endif
+
+|Router|
+backward:Continue listen request;
+repeat while (Listen to request)    
+@enduml

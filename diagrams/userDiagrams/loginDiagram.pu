@@ -8,31 +8,38 @@ if (request.url === "/users/login"?) then (false)
     :Response status code:
     **404 (NOT_FOUND)**;
     stop
+
 else (true)
     if (request.method === "POST"?) then (false)
         :Response status code:
         **405 (METHOD_NOT_ALLOWED)**;
         stop
+
     else (true)
         |Controller|
         :Received request from Router;
         :Execute **login()** function;
+
         if (Input validation success?) then (false)
             :Response status code:
             **400 (BAD_REQUEST)**;
             'Validation failed
             stop
+
         else (true)
             |Database|
             :Query user data from Database;
+
+
             if (User found?) then (false)
                 |Controller|
                 :Response status code:
                 **404 (NOT_FOUND)**;
                 note left: User not found
                 stop
+            
             else (true)
-                |Controller|
+                |Database|
                 if (Password matches?) then (false)
                     |Controller|
                     :Response status code:
@@ -40,6 +47,10 @@ else (true)
                     stop
                 
                 else (true)
+                    |Database|
+                    :Return success response;
+                    
+                    |Controller|
                     :Response status code:
                     **200 (OK)**;
                 endif

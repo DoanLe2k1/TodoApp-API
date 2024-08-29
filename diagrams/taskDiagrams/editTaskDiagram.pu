@@ -5,12 +5,12 @@ skinparam titleFontSize 60
 start
 repeat: Received request
 
-if (request.url === "/tasks/id"?) then (false)
+if (request.url === "/tasks/:id"?) then (false)
     :Response status code:
     **404 (NOT_FOUND)**;
     stop
 else (true)
-    if (request.method === "PUT"?) then (false)
+    if (request.method === "PATCH"?) then (false)
         :Response status code:
         **405 (METHOD_NOT_ALLOWED)**;
         stop
@@ -26,6 +26,7 @@ else (true)
             stop
         else (true)
             |Database|
+            :Query task by ID from Database;
             if (Task exists in Database?) then (false)
                 |Controller|
                 :Response status code:
@@ -35,6 +36,8 @@ else (true)
             else (true)
                 |Database|
                 :Update task in Database;
+                :Return success response;
+                
                 |Controller|
                 :Response status code:
                 **200 (OK)**;

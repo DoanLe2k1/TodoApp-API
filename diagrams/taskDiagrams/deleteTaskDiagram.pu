@@ -5,7 +5,7 @@ skinparam titleFontSize 60
 start
 repeat: Received request
 
-if (request.url === "/tasks/id"?) then (false)
+if (request.url === "/tasks/:id"?) then (false)
     :Response status code:
     **404 (NOT_FOUND)**;
     stop
