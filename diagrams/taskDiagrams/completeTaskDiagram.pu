@@ -59,10 +59,10 @@ else (true)
                 else (true)
                     :Update task status to incomplete;
                 endif
-                    :Return success response;
-                    |Task Controller|
-                    :Response status code:
-                    **204 (NO_CONTENT)**;   
+                :Return success response;
+                |Task Controller|
+                :Response status code:
+                **204 (NO_CONTENT)**;   
                 endif
             endif
         endif

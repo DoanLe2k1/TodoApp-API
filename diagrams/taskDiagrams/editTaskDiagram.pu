@@ -1,52 +1,63 @@
-@startuml
 title Edit Task Diagram
 skinparam titleFontSize 60
 |Router|
 start
 repeat: Received request
-
-if (request.url === "/tasks/:id"?) then (false)
+if (request.url === "/tasks/id"?) then (false)
     :Response status code:
     **404 (NOT_FOUND)**;
     stop
+
 else (true)
-    if (request.method === "PATCH"?) then (false)
+    if (request.method === "PUT"?) then (false)
         :Response status code:
         **405 (METHOD_NOT_ALLOWED)**;
         stop
+
     else (true)
-        |Controller|
+        |Task Controller|
         :Received request from Router;
         :Execute **editTask()** function;
-
-        if (Input validation success?) then (false)
+        :Extract user_id from request body;
+        :Extract token from request header Authorization;
+        |User Controller|
+        :Execute **checkTokenValid(user_id,token)** function;
+        |Database|
+        :Query check user match with token & user_id;
+        |User Controller|
+        :Receive result from query;
+        |Task Controller|
+        if (Result is True?) then (false)
             :Response status code:
             **400 (BAD_REQUEST)**;
             'Validation failed
             stop
         else (true)
-            |Database|
-            :Query task by ID from Database;
-            if (Task exists in Database?) then (false)
-                |Controller|
+            :Extract task_id from request body;
+            if (Task exists?) then (false)
                 :Response status code:
                 **404 (NOT_FOUND)**;
-                note left: Task not found
+                'Task not found
                 stop
             else (true)
-                |Database|
-                :Update task in Database;
-                :Return success response;
-                
-                |Controller|
-                :Response status code:
-                **200 (OK)**;
+                :Extract updated data from request body;
+                if (Input data validation success?) then (false)
+                    :Response status code:
+                    **400 (BAD_REQUEST)**;
+                    'Validation failed
+                    stop
+                else (true)
+                    |Database|
+                    :Update task data in Database;
+                    |Task Controller|
+                    :Response status code:
+                    **204 (NO_CONTENT)**;
+                endif
             endif
         endif
     endif
 endif
-
 |Router|
-backward: Continue listening for requests;
+backward:Continue listen request;
 repeat while (Listen to request)
 @enduml
