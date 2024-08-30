@@ -1,0 +1,55 @@
+title Delete Task Diagram
+skinparam titleFontSize 60
+|Router|
+start
+repeat: Received request
+if (request.url === "/tasks/id"?) then (false)
+    :Response status code:
+    **404 (NOT_FOUND)**;
+    stop
+
+else (true)
+    if (request.method === "DELETE"?) then (false)
+        :Response status code:
+        **405 (METHOD_NOT_ALLOWED)**;
+        stop
+
+    else (true)
+        |Task Controller|
+        :Received request from Router;
+        :Execute **deleteTask()** function;
+        :Extract user_id from request body;
+        :Extract token from request header Authorization;
+        |User Controller|
+        :Execute **checkTokenValid(user_id,token)** function;
+        |Database|
+        :Query check user match with token & user_id;
+        |User Controller|
+        :Receive result from query;
+        |Task Controller|
+        if (Result is True?) then (false)
+            :Response status code:
+            **400 (BAD_REQUEST)**;
+            'Validation failed
+            stop
+        else (true)
+            :Extract task_id from request body;
+            if (Task exists?) then (false)
+                :Response status code:
+                **404 (NOT_FOUND)**;
+                'Task not found
+                stop
+            else (true)
+                |Database|
+                :Delete task data from Database;
+                |Task Controller|
+                :Response status code:
+                **204 (NO_CONTENT)**;
+            endif
+        endif
+    endif
+endif
+|Router|
+backward:Continue listen request;
+repeat while (Listen to request)
+@enduml

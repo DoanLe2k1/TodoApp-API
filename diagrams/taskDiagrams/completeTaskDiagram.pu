@@ -1,0 +1,75 @@
+@startuml 
+title  Complete Task Diagram (Toggle Task)
+skinparam titleFontSize 60
+|Router|
+start
+repeat: Received request
+if (request.url === "/tasks/toggle-task/:id"?) then (false)
+    :Response status code:
+    **404 (NOT_FOUND)**;
+    stop
+
+else (true)
+    if (request.method === "PATCH"?) then (false)
+        :Response status code:
+        **405 (METHOD_NOT_ALLOWED)**;
+        stop
+
+    else (true)
+        |Task Controller|
+        :Receive toggle task status request from Router;
+        :Execute **toggleTask()** function;
+        :Extract user_id from request body;
+        :Extract token from request header Authorization;
+        |User Controller|
+        :Execute **checkTokenValid(user_id,token)** function;
+        |Database|
+        :Query check user match with token & user_id;
+        |User Controller|
+        :Receive result from query;
+        |Task Controller|
+        if (Result is true?) then (false)
+            :Response status code:
+            **400 (BAD_REQUEST)**;
+            'Validation failed
+            stop
+        else (true)
+            :Extract data from request body;
+            if (Input validation success?) then (false)
+            :Response status code:
+            **400 (BAD_REQUEST)**;
+            'Validation failed
+            stop
+
+            else (true)
+            |Database|
+            :Query task by ID from Database;
+
+                if (Task found?) then (false)
+                |Task Controller|
+                :Response status code:
+                **404 (NOT_FOUND)**;
+                note left: Task not found
+                stop
+            
+                else (true)
+                |Database|
+                if (Task is complete?) then (false)
+                    :Update task status to complete;
+                else (true)
+                    :Update task status to incomplete;
+                endif
+                :Return success response;
+                |Task Controller|
+                :Response status code:
+                **204 (NO_CONTENT)**;   
+                endif
+            endif
+        endif
+    endif
+endif
+
+|Router|
+backward:Continue listen request;
+repeat while (Listen to request)    
+@enduml
