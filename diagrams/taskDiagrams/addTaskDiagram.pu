@@ -16,21 +16,36 @@ else (true)
         stop
 
     else (true)
-        |Controller|
+        |Task Controller|
         :Received request from Router;
         :Execute **addTask()** function;
-
-        if (Input validation success?) then (false)
+        :Extract user_id from request body;
+        :Extract token from request header Authorization;
+        |User Controller|
+        :Execute **checkTokenValid(user_id,token)** function;
+        |Database|
+        :Query check user match with token & user_id;
+        |Task Controller|
+        :Receive result from query;
+        if (user exist?) then (false)
             :Response status code:
             **400 (BAD_REQUEST)**;
             'Validation failed
             stop
         else (true)
-            |Database|
-            :Insert task data into Database;
-            |Controller|
-            :Response status code:
-            **201 (CREATED)**;
+            :Extract data from request body;
+            if (Input data validation success?) then (false)
+                :Response status code:
+                **400 (BAD_REQUEST)**;
+                'Validation failed
+                stop
+            else (true)
+                |Database|
+                :Insert task data into Database;
+                |Task Controller|
+                :Response status code:
+                **201 (CREATED)**;
+            endif
         endif
     endif
 endif
