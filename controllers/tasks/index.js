@@ -4,12 +4,14 @@ const { GET_DB } = require('../../config/mongodb.js');
 // email => id of user
 // token === token ? find({user_id= user.id})
 // insertOne({name:...,user_id:  id of user})
+// Vi
 const addTask = async (request, response) => {
 	const body = await getDataFromRequest(request);
 };
 // email => id of user
 // token === token ? find({user_id= user.id})
 // find({user_id= user.id})
+// Thuy
 const getTasks = async (request, response) => {
 	const result = await fetch(`${urlAPI}/api/tasks`, {
 		method: 'GET',
@@ -27,6 +29,7 @@ const getTasks = async (request, response) => {
 	}
 };
 // deleteOne
+// Doan
 const deleteTask = async (request, response) => {
 	const body = await getDataFromRequest(request);
 	const result = await fetch(`${urlAPI}/api/tasks`, {
@@ -46,6 +49,7 @@ const deleteTask = async (request, response) => {
 	}
 };
 // deleteMany
+// Doan
 const deleteAllTasks = async (request, response) => {
 	const body = await getDataFromRequest(request);
 	const result = await fetch(`${urlAPI}/api/tasks/delete-all-tasks`, {
@@ -65,6 +69,7 @@ const deleteAllTasks = async (request, response) => {
 	}
 };
 // updateOne
+// Vi
 const editTask = async (request, response) => {
 	const body = await getDataFromRequest(request);
 	const result = await fetch(`${urlAPI}/api/tasks`, {
@@ -84,6 +89,7 @@ const editTask = async (request, response) => {
 	}
 };
 // updateOne
+// Thuy
 async function toggleTask(request, response) {
 	const body = await getDataFromRequest(request);
 	const result = await fetch(`${urlAPI}/api/tasks/toggle-task`, {

@@ -12,6 +12,7 @@ async function getUsers(request, response) {
 
 // insertOne({email,password})
 // response CREATED
+// Doan
 async function addUser(request, response) {
 	const body = await getDataFromRequest(request);
 	const result = await fetch(`${urlAPI}/api/users`, {
@@ -37,6 +38,7 @@ function deleteUsers(req, res) {
 // 1. query user if user.email === body.email & userpassword == body.password
 // 2.1. user exist => update User => put token into user in mongodb => return FE (user._id & user.token)
 // 2.2 user not exist => return user not found
+// Vi
 const loginUser = async (request, response) => {
 	const body = await getDataFromRequest(request);
 	const result = await fetch(`${urlAPI}/api/users/login`, {
@@ -57,6 +59,7 @@ const loginUser = async (request, response) => {
 // token = request.headers['authorization']
 // 2.1. update user, delete token of that user => return message Success
 // 2.2 return user not found (super super rare! )
+// Thuy
 const logoutUser = async (request, response) => {
 	const body = await getDataFromRequest(request);
 	const result = await fetch(`${urlAPI}/api/users/logout`, {
