@@ -10,7 +10,7 @@ rectangle TodoApp {
   usecase "Delete Task" as deleteTask
   usecase "Edit Task" as editTask
   usecase "View Task List" as viewTask
-  usecase "Creat Task" as createTask
+  usecase "Create Task" as createTask
   usecase "Logout" as logout
 }
 user --> register

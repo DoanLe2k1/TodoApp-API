@@ -25,9 +25,10 @@ else (true)
         :Execute **checkTokenValid(user_id,token)** function;
         |Database|
         :Query check user match with token & user_id;
-        |Task Controller|
+        |User Controller|
         :Receive result from query;
-        if (user exist?) then (false)
+        |Task Controller|
+        if (Result is true?) then (false)
             :Response status code:
             **400 (BAD_REQUEST)**;
             'Validation failed
@@ -41,7 +42,7 @@ else (true)
                 stop
             else (true)
                 |Database|
-                :Insert task data into Database;
+                :Add task data into Database;
                 |Task Controller|
                 :Response status code:
                 **201 (CREATED)**;
