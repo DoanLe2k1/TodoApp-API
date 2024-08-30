@@ -41,17 +41,20 @@ function deleteUsers(req, res) {
 // Vi
 const loginUser = async (request, response) => {
 	const body = await getDataFromRequest(request);
-	const result = await fetch(`${urlAPI}/api/users/login`, {
-		method: 'POST',
-		body: JSON.stringify(body),
-	});
-	if (!result.ok) {
-		throw new Error('Network result was not ok');
-	} else {
+	// body = {email: 'effesf@gmail.com',password:'1234123'}
+	if (body?.email && body?.password) {
+		const query = {
+			email: body.email,
+			password: body.password,
+		};
+		const todoAppInstance = await GET_DB();
+		const users = todoAppInstance.collection('users');
+		const user = await users.findOne(query);
+		console.log(user);
 		response.writeHead(httpStatusCode.OK, {
 			'Content-Type': 'application/json',
 		});
-		response.end(JSON.stringify(await result.json()));
+		response.end(JSON.stringify(user));
 	}
 };
 // 1. query user if user.email === body.email & user.token === token
