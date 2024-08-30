@@ -16,7 +16,7 @@ else (true)
         stop
 
     else (true)
-        |Controller|
+        |User Controller|
         :Received request from Router;
         :Execute **login()** function;
 
@@ -32,7 +32,7 @@ else (true)
 
 
             if (User found?) then (false)
-                |Controller|
+                |User Controller|
                 :Response status code:
                 **404 (NOT_FOUND)**;
                 note left: User not found
@@ -40,8 +40,8 @@ else (true)
             
             else (true)
                 |Database|
-                if (Password matches?) then (false)
-                    |Controller|
+                if (Password corrected?) then (false)
+                    |User Controller|
                     :Response status code:
                     **401 (UNAUTHORIZED)**; 
                     stop
@@ -50,7 +50,7 @@ else (true)
                     |Database|
                     :Return success response;
                     
-                    |Controller|
+                    |User Controller|
                     :Response status code:
                     **200 (OK)**;
                 endif
