@@ -6,15 +6,9 @@ const client = new MongoClient(
 		'mongodb+srv://viht61220:2mZBTpaapnWeByvg@cluster0-videv.hnusrwx.mongodb.net/'
 );
 
-async function CONNECT_DB() {
-	await client.connect();
-	todoAppInstance = client.db('todoapp');
+function GET_DB() {
+	const todoAppInstance = client.db('todoapp');
 	return todoAppInstance;
 }
 
-async function GET_DB() {
-	if (!todoAppInstance) throw new Error('You need to connect database first!');
-	return todoAppInstance;
-}
-
-module.exports = { CONNECT_DB, GET_DB };
+module.exports = { GET_DB, client };

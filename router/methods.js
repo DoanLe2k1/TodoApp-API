@@ -16,6 +16,11 @@ const routerMethods = Object.freeze({
 			callback(req, res);
 		}
 	},
+	patch: function (req, res, path, callback) {
+		if (path === req.url && req.method === METHODS.PATCH) {
+			callback(req, res);
+		}
+	},
 	delete: function (req, res, path, callback) {
 		if (path === req.url && req.method === METHODS.DELETE) {
 			callback(req, res);

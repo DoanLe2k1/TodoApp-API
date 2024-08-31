@@ -4,10 +4,7 @@ const router = require('./router/index.js');
 const createServer = require('http').createServer;
 const port = 3000;
 
-const server = createServer(async function configHeadersServer(
-	request,
-	response
-) {
+const server = createServer(function configHeadersServer(request, response) {
 	// Config cors to allow fetch data from front to back
 	response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5500'); // Replace with specific origin if needed
 	response.setHeader('Access-Control-Request-Method', '*');
@@ -28,7 +25,6 @@ const server = createServer(async function configHeadersServer(
 	if (request.method === METHODS.OPTIONS) {
 		response.end();
 	}
-	await CONNECT_DB();
 	router.run(request, response);
 });
 

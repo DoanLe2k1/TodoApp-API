@@ -1,13 +1,15 @@
-const { getDataFromRequest } = require('../../ultis/index.js');
+const { getDataFromRequest, generateUID } = require('../../ultis/index.js');
 const { httpStatusCode, urlAPI } = require('../../constants.js');
-const { GET_DB } = require('../../config/mongodb.js');
+const { GET_DB, client } = require('../../config/mongodb.js');
+const { ObjectId } = require('mongodb');
+const USER_DATABASE_NAME = 'users';
 
 async function getUsers(request, response) {
-	const todoAppInstance = await GET_DB();
-	const users = todoAppInstance.collection('users');
-	const user = await users.findOne({ email: 'vi.tien.huynh@udt.group' });
-	response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-	response.end(JSON.stringify(user));
+	// const user = await GET_DB()
+	// 	.collection(USER_DATABASE_NAME)
+	// 	.findOne({ email: 'vi.tien.huynh@udt.group' });
+	// response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
+	// response.end(JSON.stringify(user));
 }
 
 // insertOne({email,password})
@@ -39,22 +41,39 @@ function deleteUsers(req, res) {
 // 2.1. user exist => update User => put token into user in mongodb => return FE (user._id & user.token)
 // 2.2 user not exist => return user not found
 // Vi
+const checkTokenIsValid = async (user_id, token) => {
+	const result = await GET_DB()
+		.collection(USER_DATABASE_NAME)
+		.findOne({ _id: new ObjectId(user_id), token: token });
+	if (result) {
+		return true;
+	} else {
+		return false;
+	}
+};
+
 const loginUser = async (request, response) => {
 	const body = await getDataFromRequest(request);
-	// body = {email: 'effesf@gmail.com',password:'1234123'}
 	if (body?.email && body?.password) {
 		const query = {
 			email: body.email,
 			password: body.password,
 		};
-		const todoAppInstance = await GET_DB();
-		const users = todoAppInstance.collection('users');
-		const user = await users.findOne(query);
-		console.log(user);
+		const queryUpdate = {
+			$set: { token: generateUID() },
+		};
+		const options = {
+			returnNewDocument: true,
+			upsert: true,
+		};
+		const result = await client
+			.db('todoapp')
+			.collection(USER_DATABASE_NAME)
+			.findOneAndUpdate(query, queryUpdate, options);
 		response.writeHead(httpStatusCode.OK, {
 			'Content-Type': 'application/json',
 		});
-		response.end(JSON.stringify(user));
+		response.end(JSON.stringify(result));
 	}
 };
 // 1. query user if user.email === body.email & user.token === token
@@ -86,4 +105,5 @@ module.exports = {
 	deleteUsers,
 	loginUser,
 	logoutUser,
+	checkTokenIsValid,
 };

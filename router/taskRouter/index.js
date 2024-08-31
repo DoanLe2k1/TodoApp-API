@@ -20,7 +20,7 @@ var taskRouter = {
 			routes.task.deleteAllTasks.value,
 			deleteAllTasks
 		);
-		routerMethods.put(req, res, routes.task.value, editTask);
+		routerMethods.patch(req, res, routes.task.value, editTask);
 		routerMethods.put(req, res, routes.task.toggleTask.value, toggleTask);
 	},
 };

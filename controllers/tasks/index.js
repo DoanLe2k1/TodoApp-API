@@ -1,6 +1,10 @@
-const { getDataFromRequest } = require('../../ultis/index.js');
+const {
+	getBodyDataRequest,
+	checkAuthorizationHeaders,
+} = require('../../ultis/index.js');
 const { httpStatusCode, urlAPI } = require('../../constants.js');
-const { GET_DB } = require('../../config/mongodb.js');
+const { client } = require('../../config/mongodb.js');
+const { checkTokenIsValid } = require('../users/index.js');
 // email => id of user
 // token === token ? find({user_id= user.id})
 // insertOne({name:...,user_id:  id of user})
@@ -71,22 +75,34 @@ const deleteAllTasks = async (request, response) => {
 // updateOne
 // Vi
 const editTask = async (request, response) => {
-	const body = await getDataFromRequest(request);
-	const result = await fetch(`${urlAPI}/api/tasks`, {
-		method: 'PUT',
-		headers: {
-			Authorization: JSON.stringify(request.headers['authorization']),
-		},
-		body: JSON.stringify(body),
-	});
-	if (!result.ok) {
-		throw new Error('Network result was not ok');
-	} else {
+	const body = await getBodyDataRequest(request);
+	const token = checkAuthorizationHeaders(request);
+	if (await checkTokenIsValid(body.user_id, token)) {
 		response.writeHead(httpStatusCode.OK, {
 			'Content-Type': 'application/json',
 		});
-		response.end(JSON.stringify(await result.json()));
+		response.end(JSON.stringify('exist'));
+	} else {
+		response.writeHead(httpStatusCode.NOT_FOUND, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify('existnot'));
 	}
+	// const result = await fetch(`${urlAPI}/api/tasks`, {
+	// 	method: 'PUT',
+	// 	headers: {
+	// 		Authorization: JSON.stringify(request.headers['authorization']),
+	// 	},
+	// 	body: JSON.stringify(body),
+	// });
+	// if (!result.ok) {
+	// 	throw new Error('Network result was not ok');
+	// } else {
+	// 	response.writeHead(httpStatusCode.OK, {
+	// 		'Content-Type': 'application/json',
+	// 	});
+	// 	response.end(JSON.stringify(await result.json()));
+	// }
 };
 // updateOne
 // Thuy
