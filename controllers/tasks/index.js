@@ -74,43 +74,64 @@ async function getTasks(request, response) {
 
 // deleteOne
 // Doan
-const deleteTask = async (request, response) => {
-	const body = await getDataFromRequest(request);
-	const result = await fetch(`${urlAPI}/api/tasks`, {
-		method: 'DELETE',
-		headers: {
-			Authorization: JSON.stringify(request.headers['authorization']),
-		},
-		body: JSON.stringify(body),
-	});
-	if (!result.ok) {
-		throw new Error('Network result was not ok');
-	} else {
-		response.writeHead(httpStatusCode.OK, {
-			'Content-Type': 'application/json',
-		});
-		response.end(JSON.stringify(await result.json()));
-	}
-};
+async function deleteTask(request, response) {
+	const token = checkAuthorizationHeaders(request);
+    let message = '';
+    const body = await getDataFromRequest(request);
+    if (await checkTokenIsValid(body.user_id, token)) {
+        if (body) {
+            const query = {
+                _id: new ObjectId(body._id),
+            };
+            const result = await GET_DB()
+                .collection(TASK_DATABASE_NAME)
+                .deleteOne(query);     
+            if (result.deletedCount > 0) {
+                message = 'Delete Task Successfully';
+                handleMessage(message, response);
+            } else {
+                message = 'Task not found';
+                handleMessage(message, response);
+            }
+        } else {
+            message = 'Body not found';
+            handleMessage(message, response);
+        }
+    } else {
+        message = 'Token is not valid';
+        handleMessage(message, response);
+    }
+}
+
 // deleteMany
 // Doan
-const deleteAllTasks = async (request, response) => {
-	const body = await getDataFromRequest(request);
-	const result = await fetch(`${urlAPI}/api/tasks/delete-all-tasks`, {
-		method: 'DELETE',
-		headers: {
-			Authorization: JSON.stringify(request.headers['authorization']),
-		},
-		body: JSON.stringify(body),
-	});
-	if (!result.ok) {
-		throw new Error('Network result was not ok');
-	} else {
-		response.writeHead(httpStatusCode.OK, {
-			'Content-Type': 'application/json',
-		});
-		response.end(JSON.stringify(await result.json()));
-	}
+async function deleteAllTasks (request, response) {
+	const token = checkAuthorizationHeaders(request);
+    let message = '';
+    const body = await getDataFromRequest(request);
+    if (await checkTokenIsValid(body.user_id, token)) {
+        if (body) {
+            const query = {
+                completed: body.completed
+            };
+            const result = await GET_DB()
+                .collection(TASK_DATABASE_NAME)
+                .deleteMany(query);     
+            if (result.deletedCount > 0) {
+                message = 'Delete All Undone Tasks Successfully';
+                handleMessage(message, response);
+            } else {
+                message = 'Task not found';
+                handleMessage(message, response);
+            }
+        } else {
+            message = 'Body not found';
+            handleMessage(message, response);
+        }
+    } else {
+        message = 'Token is not valid';
+        handleMessage(message, response);
+    }
 };
 
 async function editTask(request, response) {

@@ -26,8 +26,7 @@ async function addUser(request, response) {
 	const body = await getBodyDataRequest(request);
 	let message = '';
 	const newUsertoAdd = {
-		email: body.email,
-		password: body.password
+		...body
 	};
 	const newUser = await GET_DB()
 		.collection(USER_DATABASE_NAME)

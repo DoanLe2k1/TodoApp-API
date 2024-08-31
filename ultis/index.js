@@ -85,6 +85,17 @@ const handleMessage = (message, response) => {
 			'Content-Type': 'application/json',
 		});
 		response.end(JSON.stringify(message));
+	} else if (message === 'Delete Task Successfully') {
+		response.writeHead(httpStatusCode.NO_CONTENT, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
+	}
+	else if (message === 'Delete All Undone Tasks Successfully') {
+		response.writeHead(httpStatusCode.NO_CONTENT, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
 	}
 };
 
