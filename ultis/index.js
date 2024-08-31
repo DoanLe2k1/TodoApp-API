@@ -80,6 +80,11 @@ const handleMessage = (message, response) => {
 			'Content-Type': 'application/json',
 		});
 		response.end(JSON.stringify(message));
+	} else if (message === 'Add Failed') {
+		response.writeHead(httpStatusCode.INTERNAL_SERVER_ERROR, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
 	}
 };
 

@@ -23,20 +23,24 @@ async function getUsers(request, response) {
 // response CREATED
 // Doan
 async function addUser(request, response) {
-	const body = await getDataFromRequest(request);
-	const result = await fetch(`${urlAPI}/api/users`, {
-		method: 'POST',
-		body: JSON.stringify(body),
-	});
-	if (!result.ok) {
-		throw new Error('Network result was not ok');
+	const body = await getBodyDataRequest(request);
+	let message = '';
+	const newUsertoAdd = {
+		email: body.email,
+		password: body.password
+	};
+	const newUser = await GET_DB()
+		.collection(USER_DATABASE_NAME)
+		.insertOne(newUsertoAdd);
+	if (newUser) {
+		message = 'Add Success';
+		handleMessage(message, response);
 	} else {
-		response.writeHead(httpStatusCode.OK, {
-			'Content-Type': 'application/json',
-		});
-		response.end(JSON.stringify(await result.json()));
+		message = 'Add Failed';
+		handleMessage(message, response);
 	}
 }
+
 
 function updateUsers(req, res) {
 	res.end('Update User Succesfully');
