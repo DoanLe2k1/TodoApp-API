@@ -1,5 +1,6 @@
 const {
 	getBodyDataRequest,
+	getDataFromRequest,
 	checkAuthorizationHeaders,
 	handleMessage,
 } = require('../../ultis/index.js');
@@ -10,22 +11,27 @@ const {
 } = require('../../constants.js');
 const { GET_DB } = require('../../config/mongodb.js');
 const { checkTokenIsValid } = require('../users/index.js');
-const { ObjectId, ReturnDocument } = require('mongodb');
+const { ObjectId } = require('mongodb');
 
 async function addTask(request, response) {
-	const body = await getBodyDataRequest(request);
 	const token = checkAuthorizationHeaders(request);
 	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
-		const newTaskToAdd = {
-			...body,
-			user_id: new ObjectId(body.user_id),
-		};
-		const newTask = await GET_DB()
-			.collection(TASK_DATABASE_NAME)
-			.insertOne(newTaskToAdd);
-		if (newTask) {
-			message = 'Add Success';
+		let body = await getDataFromRequest(request);
+		if (body) {
+			const newTaskToAdd = {
+				...body,
+				user_id: new ObjectId(body.user_id),
+			};
+			const newTask = await GET_DB()
+				.collection(TASK_DATABASE_NAME)
+				.insertOne(newTaskToAdd);
+			if (newTask) {
+				message = 'Add Success';
+				handleMessage(message, response);
+			}
+		} else {
+			message = 'Body not found';
 			handleMessage(message, response);
 		}
 	} else {
@@ -34,23 +40,38 @@ async function addTask(request, response) {
 	}
 }
 
-// Thuy
-const getTasks = async (request, response) => {
-	const result = await fetch(`${urlAPI}/api/tasks`, {
-		method: 'GET',
-		headers: {
-			Authorization: JSON.stringify(request.headers['authorization']),
-		},
-	});
-	if (!result.ok) {
-		throw new Error('Network result was not ok');
+async function getTasks(request, response) {
+	const token = checkAuthorizationHeaders(request);
+	let body = await getDataFromRequest(request);
+	let message = '';
+	if (body) {
+		if (await checkTokenIsValid(body.id, token)) {
+			const query = {
+				user_id: new ObjectId(body.id),
+			};
+			const result = await GET_DB()
+				.collection(TASK_DATABASE_NAME)
+				.find(query)
+				.toArray();
+			if (result.length > 0) {
+				response.writeHead(httpStatusCode.OK, {
+					'Content-Type': 'application/json',
+				});
+				response.end(JSON.stringify(result));
+			} else {
+				message = 'Task not found';
+				handleMessage(message, response);
+			}
+		} else {
+			message = 'Token is not valid';
+			handleMessage(message, response);
+		}
 	} else {
-		response.writeHead(httpStatusCode.ACCEPTED, {
-			'Content-Type': 'application/json',
-		});
-		response.end(JSON.stringify(await result.json()));
+		message = 'Body not found';
+		handleMessage(message, response);
 	}
-};
+}
+
 // deleteOne
 // Doan
 const deleteTask = async (request, response) => {
@@ -93,25 +114,30 @@ const deleteAllTasks = async (request, response) => {
 };
 
 async function editTask(request, response) {
-	const body = await getBodyDataRequest(request);
 	const token = checkAuthorizationHeaders(request);
 	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
-		const query = {
-			_id: new ObjectId(body._id),
-		};
-		const queryUpdate = {
-			$set: { name: body.name },
-		};
-		const options = { returnDocument: 'after' };
-		const result = await GET_DB()
-			.collection(TASK_DATABASE_NAME)
-			.findOneAndUpdate(query, queryUpdate, options);
-		if (result) {
-			message = 'Put/Patch Success';
-			handleMessage(message, response);
+		let body = await getDataFromRequest(request);
+		if (body) {
+			const query = {
+				_id: new ObjectId(body._id),
+			};
+			const queryUpdate = {
+				$set: { name: body.name },
+			};
+			const options = { returnDocument: 'after' };
+			const result = await GET_DB()
+				.collection(TASK_DATABASE_NAME)
+				.findOneAndUpdate(query, queryUpdate, options);
+			if (result) {
+				message = 'Put/Patch Success';
+				handleMessage(message, response);
+			} else {
+				message = 'Task not found';
+				handleMessage(message, response);
+			}
 		} else {
-			message = 'Task not found';
+			message = 'Body not found';
 			handleMessage(message, response);
 		}
 	} else {

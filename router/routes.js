@@ -11,6 +11,9 @@ module.exports = {
 
 	task: {
 		value: '/tasks',
+		getTasks: {
+			value: '/tasks/get-tasks',
+		},
 		toggleTask: {
 			value: '/tasks/toggle-task',
 		},

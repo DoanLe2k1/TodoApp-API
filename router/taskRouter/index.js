@@ -11,7 +11,7 @@ const {
 } = require('../../controllers/tasks/index.js');
 var taskRouter = {
 	run(req, res) {
-		routerMethods.get(req, res, routes.task.value, getTasks);
+		routerMethods.post(req, res, routes.task.getTasks.value, getTasks);
 		routerMethods.post(req, res, routes.task.value, addTask);
 		routerMethods.delete(req, res, routes.task.value, deleteTask);
 		routerMethods.delete(

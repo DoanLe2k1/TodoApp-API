@@ -32,10 +32,10 @@ const checkAuthorizationHeaders = (request) => {
 	}
 };
 
-const getBodyDataRequest = async (request) => {
+const getBodyDataRequest = async (request, response) => {
 	const body = await getDataFromRequest(request);
 	if (!body) {
-		response.writeHead(httpStatusCode.ERROR, {
+		response.writeHead(httpStatusCode.BAD_REQUEST, {
 			'Content-Type': 'application/json',
 		});
 		response.end(JSON.stringify({ message: 'No Data received' }));
@@ -67,6 +67,16 @@ const handleMessage = (message, response) => {
 		response.end(JSON.stringify(message));
 	} else if (message === 'Put/Patch Success') {
 		response.writeHead(httpStatusCode.NO_CONTENT, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
+	} else if (message === 'Body not found') {
+		response.writeHead(httpStatusCode.BAD_REQUEST, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
+	} else if (message === 'Get Tasks Successfully') {
+		response.writeHead(httpStatusCode.OK, {
 			'Content-Type': 'application/json',
 		});
 		response.end(JSON.stringify(message));

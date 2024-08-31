@@ -11,4 +11,4 @@ function GET_DB() {
 	return todoAppInstance;
 }
 
-module.exports = { GET_DB, client };
+module.exports = { GET_DB };
