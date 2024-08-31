@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { httpStatusCode } = require('../constants');
 const writeDataToFile = (fileName, data) => {
 	fs.writeFileSync(fileName, data, 'utf-8', (error) => console.log(error));
 };
@@ -43,10 +44,40 @@ const getBodyDataRequest = async (request) => {
 	}
 };
 
+const handleMessage = (message, response) => {
+	if (message === 'Add Success') {
+		response.writeHead(httpStatusCode.CREATED, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
+	} else if (message === 'Token is not valid') {
+		response.writeHead(httpStatusCode.UNAUTHORIZED, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
+	} else if (message === 'User not found') {
+		response.writeHead(httpStatusCode.NOT_FOUND, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
+	} else if (message === 'Task not found') {
+		response.writeHead(httpStatusCode.NOT_FOUND, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
+	} else if (message === 'Put/Patch Success') {
+		response.writeHead(httpStatusCode.NO_CONTENT, {
+			'Content-Type': 'application/json',
+		});
+		response.end(JSON.stringify(message));
+	}
+};
+
 module.exports = {
 	getDataFromRequest,
 	generateUID,
 	checkAuthorizationHeaders,
 	getBodyDataRequest,
 	writeDataToFile,
+	handleMessage,
 };

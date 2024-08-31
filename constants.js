@@ -28,9 +28,13 @@ const METHODS = Object.freeze({
 });
 
 const urlAPI = 'http://localhost:3001';
+const TASK_DATABASE_NAME = 'tasks';
+const USER_DATABASE_NAME = 'users';
 
 module.exports = {
 	httpStatusCode,
 	urlAPI,
 	METHODS,
+	USER_DATABASE_NAME,
+	TASK_DATABASE_NAME,
 };

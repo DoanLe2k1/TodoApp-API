@@ -1,20 +1,39 @@
 const {
 	getBodyDataRequest,
 	checkAuthorizationHeaders,
+	handleMessage,
 } = require('../../ultis/index.js');
-const { httpStatusCode, urlAPI } = require('../../constants.js');
-const { client } = require('../../config/mongodb.js');
+const {
+	httpStatusCode,
+	urlAPI,
+	TASK_DATABASE_NAME,
+} = require('../../constants.js');
+const { GET_DB } = require('../../config/mongodb.js');
 const { checkTokenIsValid } = require('../users/index.js');
-// email => id of user
-// token === token ? find({user_id= user.id})
-// insertOne({name:...,user_id:  id of user})
-// Vi
-const addTask = async (request, response) => {
-	const body = await getDataFromRequest(request);
-};
-// email => id of user
-// token === token ? find({user_id= user.id})
-// find({user_id= user.id})
+const { ObjectId, ReturnDocument } = require('mongodb');
+
+async function addTask(request, response) {
+	const body = await getBodyDataRequest(request);
+	const token = checkAuthorizationHeaders(request);
+	let message = '';
+	if (await checkTokenIsValid(body.user_id, token)) {
+		const newTaskToAdd = {
+			...body,
+			user_id: new ObjectId(body.user_id),
+		};
+		const newTask = await GET_DB()
+			.collection(TASK_DATABASE_NAME)
+			.insertOne(newTaskToAdd);
+		if (newTask) {
+			message = 'Add Success';
+			handleMessage(message, response);
+		}
+	} else {
+		message = 'Token is not valid';
+		handleMessage(message, response);
+	}
+}
+
 // Thuy
 const getTasks = async (request, response) => {
 	const result = await fetch(`${urlAPI}/api/tasks`, {
@@ -72,38 +91,34 @@ const deleteAllTasks = async (request, response) => {
 		response.end(JSON.stringify(await result.json()));
 	}
 };
-// updateOne
-// Vi
-const editTask = async (request, response) => {
+
+async function editTask(request, response) {
 	const body = await getBodyDataRequest(request);
 	const token = checkAuthorizationHeaders(request);
+	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
-		response.writeHead(httpStatusCode.OK, {
-			'Content-Type': 'application/json',
-		});
-		response.end(JSON.stringify('exist'));
+		const query = {
+			_id: new ObjectId(body._id),
+		};
+		const queryUpdate = {
+			$set: { name: body.name },
+		};
+		const options = { returnDocument: 'after' };
+		const result = await GET_DB()
+			.collection(TASK_DATABASE_NAME)
+			.findOneAndUpdate(query, queryUpdate, options);
+		if (result) {
+			message = 'Put/Patch Success';
+			handleMessage(message, response);
+		} else {
+			message = 'Task not found';
+			handleMessage(message, response);
+		}
 	} else {
-		response.writeHead(httpStatusCode.NOT_FOUND, {
-			'Content-Type': 'application/json',
-		});
-		response.end(JSON.stringify('existnot'));
+		message = 'Token is not valid';
+		handleMessage(message, response);
 	}
-	// const result = await fetch(`${urlAPI}/api/tasks`, {
-	// 	method: 'PUT',
-	// 	headers: {
-	// 		Authorization: JSON.stringify(request.headers['authorization']),
-	// 	},
-	// 	body: JSON.stringify(body),
-	// });
-	// if (!result.ok) {
-	// 	throw new Error('Network result was not ok');
-	// } else {
-	// 	response.writeHead(httpStatusCode.OK, {
-	// 		'Content-Type': 'application/json',
-	// 	});
-	// 	response.end(JSON.stringify(await result.json()));
-	// }
-};
+}
 // updateOne
 // Thuy
 async function toggleTask(request, response) {
