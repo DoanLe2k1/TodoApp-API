@@ -145,24 +145,39 @@ async function editTask(request, response) {
 		handleMessage(message, response);
 	}
 }
-// updateOne
-// Thuy
+
 async function toggleTask(request, response) {
-	const body = await getDataFromRequest(request);
-	const result = await fetch(`${urlAPI}/api/tasks/toggle-task`, {
-		method: 'PUT',
-		headers: {
-			Authorization: JSON.stringify(request.headers['authorization']),
-		},
-		body: JSON.stringify(body),
-	});
-	if (!result.ok) {
-		throw new Error('Network result was not ok');
+	const token = checkAuthorizationHeaders(request);
+	let body = await getDataFromRequest(request);
+	let message = '';
+	if (await checkTokenIsValid(body.user_id, token)) {
+		if (body) {
+			const query = {
+				_id: new ObjectId(body._id)
+			}
+			const queryUpdate = {
+				$set: { completed: body.completed },
+			};
+			const options = { returnDocument: 'after' };
+			const result = await GET_DB()
+				.collection(TASK_DATABASE_NAME)
+				.findOneAndUpdate(query, queryUpdate, options);
+			if (result) {
+				response.writeHead(httpStatusCode.OK, {
+					'Content-Type': 'application/json',
+				});
+				response.end(JSON.stringify(result));
+			} else {
+				message = 'Task not found';
+				handleMessage(message, response);
+			}
+		} else {
+			message = 'Body not found';
+			handleMessage(message, response);
+		}
 	} else {
-		response.writeHead(httpStatusCode.OK, {
-			'Content-Type': 'application/json',
-		});
-		response.end(JSON.stringify(await result.json()));
+		message = 'Token is not valid';
+		handleMessage(message, response);
 	}
 }
 
