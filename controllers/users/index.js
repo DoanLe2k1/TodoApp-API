@@ -84,27 +84,38 @@ async function loginUser(request, response) {
 		}
 	}
 }
-// 1. query user if user.email === body.email & user.token === token
-// FE => Authorization: request.headers['authorization']
-// token = request.headers['authorization']
-// 2.1. update user, delete token of that user => return message Success
-// 2.2 return user not found (super super rare! )
-// Thuy
-const logoutUser = async (request, response) => {
-	const body = await getDataFromRequest(request);
-	const result = await fetch(`${urlAPI}/api/users/logout`, {
-		method: 'POST',
-		body: JSON.stringify(body),
-	});
-	if (!result.ok) {
-		throw new Error('Network result was not ok');
-	} else {
+
+async function logoutUser(request, response) {
+	const body = await getBodyDataRequest(request);
+	const token = request.headers['authorization']
+	if (!token) {
+		response.writeHead(httpStatusCode.UNAUTHORIZED, {
+			'Content-Type': 'application/json',
+		});
+	}
+	const query = {
+		_id: new ObjectId(body._id)
+	}
+	const queryUpdate = {
+		$unset: { token: ''}
+	}
+	const options = {
+		returnDocument: 'after',
+	}
+	const result = await GET_DB()
+		.collection(USER_DATABASE_NAME)
+		.findOneAndUpdate(query, queryUpdate, options)
+	if (result) {
 		response.writeHead(httpStatusCode.OK, {
 			'Content-Type': 'application/json',
 		});
-		response.end(JSON.stringify(await result.json()));
+		response.end(JSON.stringify(result));
+	} else {
+		message = 'User not found';
+		handleMessage(message, response);
 	}
-};
+}
+
 
 module.exports = {
 	getUsers,

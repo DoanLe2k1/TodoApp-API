@@ -1,65 +1,65 @@
-@startuml 
+@startuml
 title Logout Diagram
 skinparam titleFontSize 60
 |Router|
 start
 repeat: Received request
 if (request.url === "/users/login"?) then (false)
-    :Response status code:
-    **404 (NOT_FOUND)**;
-    stop
+:Response status code:
+**404 (NOT_FOUND)**;
+stop
 
 else (true)
-    if (request.method === "POST"?) then (false)
+if (request.method === "PATCH"?) then (false)
+:Response status code:
+**405 (METHOD_NOT_ALLOWED)**;
+stop
+
+else (true)
+|User Controller|
+:Received request from Router;
+:Execute **logout()** function;
+:Extract token from request body;
+if (Token valid?) then (false)
+    :Response status code:
+    **401 (UNAUTHORIZED)**;
+    stop
+    
+else (true)
+    :Extract user_id from request body;
+
+    if (Input validation success?) then (false)
         :Response status code:
-        **405 (METHOD_NOT_ALLOWED)**;
+        **400 (BAD_REQUEST)**;
+        'Validation failed
         stop
 
     else (true)
-        |Controller|
-        :Received request from Router;
-        :Execute **login()** function;
+        |Database|
+        :Query user_id from Database;
 
-        if (Input validation success?) then (false)
+        if (User found?) then (false)
+            |User Controller|
             :Response status code:
-            **400 (BAD_REQUEST)**;
-            'Validation failed
+            **404 (NOT_FOUND)**;
+            note left: User not found
             stop
 
         else (true)
             |Database|
-            :Query user data from Database;
+            :Delete user token;
+            :Return success response;
 
-
-            if (User found?) then (false)
-                |Controller|
-                :Response status code:
-                **404 (NOT_FOUND)**;
-                note left: User not found
-                stop
-            
-            else (true)
-                |Database|
-                if (Password matches?) then (false)
-                    |Controller|
-                    :Response status code:
-                    **401 (UNAUTHORIZED)**; 
-                    stop
-                
-                else (true)
-                    |Database|
-                    :Return success response;
-                    
-                    |Controller|
-                    :Response status code:
-                    **200 (OK)**;
-                endif
-            endif
+            |User Controller|
+            :Response status code:
+            **200 (OK)**;
         endif
     endif
+endif
+endif
 endif
 
 |Router|
 backward:Continue listen request;
-repeat while (Listen to request)    
+repeat while (Listen to request)
 @enduml
