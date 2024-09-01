@@ -32,18 +32,6 @@ const checkAuthorizationHeaders = (request) => {
 	}
 };
 
-const getBodyDataRequest = async (request, response) => {
-	const body = await getDataFromRequest(request);
-	if (!body) {
-		response.writeHead(httpStatusCode.BAD_REQUEST, {
-			'Content-Type': 'application/json',
-		});
-		response.end(JSON.stringify({ message: 'No Data received' }));
-	} else {
-		return body;
-	}
-};
-
 const handleMessage = (message, response) => {
 	if (message === 'Add Success') {
 		response.writeHead(httpStatusCode.CREATED, {
@@ -90,8 +78,7 @@ const handleMessage = (message, response) => {
 			'Content-Type': 'application/json',
 		});
 		response.end(JSON.stringify(message));
-	}
-	else if (message === 'Delete All Undone Tasks Successfully') {
+	} else if (message === 'Delete All Undone Tasks Successfully') {
 		response.writeHead(httpStatusCode.NO_CONTENT, {
 			'Content-Type': 'application/json',
 		});
@@ -103,7 +90,6 @@ module.exports = {
 	getDataFromRequest,
 	generateUID,
 	checkAuthorizationHeaders,
-	getBodyDataRequest,
 	writeDataToFile,
 	handleMessage,
 };

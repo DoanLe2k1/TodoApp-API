@@ -1,17 +1,13 @@
 const {
 	generateUID,
 	handleMessage,
-	getBodyDataRequest,
+	getDataFromRequest,
 } = require('../../ultis/index.js');
-const {
-	httpStatusCode,
-	urlAPI,
-	USER_DATABASE_NAME,
-} = require('../../constants.js');
-const { GET_DB, client } = require('../../config/mongodb.js');
+const { httpStatusCode, USER_DATABASE_NAME } = require('../../constants.js');
+const { GET_DB } = require('../../config/mongodb.js');
 const { ObjectId } = require('mongodb');
 
-async function getUsers(request, response) {
+async function getUserById(request, response) {
 	// const user = await GET_DB()
 	// 	.collection(USER_DATABASE_NAME)
 	// 	.findOne({ email: 'vi.tien.huynh@udt.group' });
@@ -19,14 +15,11 @@ async function getUsers(request, response) {
 	// response.end(JSON.stringify(user));
 }
 
-// insertOne({email,password})
-// response CREATED
-// Doan
 async function addUser(request, response) {
 	const body = await getBodyDataRequest(request);
 	let message = '';
 	const newUsertoAdd = {
-		...body
+		...body,
 	};
 	const newUser = await GET_DB()
 		.collection(USER_DATABASE_NAME)
@@ -40,13 +33,6 @@ async function addUser(request, response) {
 	}
 }
 
-
-function updateUsers(req, res) {
-	res.end('Update User Succesfully');
-}
-function deleteUsers(req, res) {
-	res.end(JSON.stringify({ message: 'Delete User Succesfully' }));
-}
 async function checkTokenIsValid(user_id, token) {
 	const result = await GET_DB()
 		.collection(USER_DATABASE_NAME)
@@ -90,24 +76,24 @@ async function loginUser(request, response) {
 
 async function logoutUser(request, response) {
 	const body = await getBodyDataRequest(request);
-	const token = request.headers['authorization']
+	const token = request.headers['authorization'];
 	if (!token) {
 		response.writeHead(httpStatusCode.UNAUTHORIZED, {
 			'Content-Type': 'application/json',
 		});
 	}
 	const query = {
-		_id: new ObjectId(body._id)
-	}
+		_id: new ObjectId(body._id),
+	};
 	const queryUpdate = {
-		$unset: { token: ''}
-	}
+		$unset: { token: '' },
+	};
 	const options = {
 		returnDocument: 'after',
-	}
+	};
 	const result = await GET_DB()
 		.collection(USER_DATABASE_NAME)
-		.findOneAndUpdate(query, queryUpdate, options)
+		.findOneAndUpdate(query, queryUpdate, options);
 	if (result) {
 		response.writeHead(httpStatusCode.OK, {
 			'Content-Type': 'application/json',
@@ -119,12 +105,9 @@ async function logoutUser(request, response) {
 	}
 }
 
-
 module.exports = {
-	getUsers,
+	getUserById,
 	addUser,
-	updateUsers,
-	deleteUsers,
 	loginUser,
 	logoutUser,
 	checkTokenIsValid,

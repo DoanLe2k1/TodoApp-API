@@ -1,4 +1,3 @@
-const { CONNECT_DB } = require('./config/mongodb.js');
 const { METHODS } = require('./constants.js');
 const router = require('./router/index.js');
 const createServer = require('http').createServer;

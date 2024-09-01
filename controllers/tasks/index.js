@@ -1,14 +1,9 @@
 const {
-	getBodyDataRequest,
 	getDataFromRequest,
 	checkAuthorizationHeaders,
 	handleMessage,
 } = require('../../ultis/index.js');
-const {
-	httpStatusCode,
-	urlAPI,
-	TASK_DATABASE_NAME,
-} = require('../../constants.js');
+const { httpStatusCode, TASK_DATABASE_NAME } = require('../../constants.js');
 const { GET_DB } = require('../../config/mongodb.js');
 const { checkTokenIsValid } = require('../users/index.js');
 const { ObjectId } = require('mongodb');
@@ -72,67 +67,63 @@ async function getTasks(request, response) {
 	}
 }
 
-// deleteOne
-// Doan
 async function deleteTask(request, response) {
 	const token = checkAuthorizationHeaders(request);
-    let message = '';
-    const body = await getDataFromRequest(request);
-    if (await checkTokenIsValid(body.user_id, token)) {
-        if (body) {
-            const query = {
-                _id: new ObjectId(body._id),
-            };
-            const result = await GET_DB()
-                .collection(TASK_DATABASE_NAME)
-                .deleteOne(query);     
-            if (result.deletedCount > 0) {
-                message = 'Delete Task Successfully';
-                handleMessage(message, response);
-            } else {
-                message = 'Task not found';
-                handleMessage(message, response);
-            }
-        } else {
-            message = 'Body not found';
-            handleMessage(message, response);
-        }
-    } else {
-        message = 'Token is not valid';
-        handleMessage(message, response);
-    }
+	let message = '';
+	const body = await getDataFromRequest(request);
+	if (await checkTokenIsValid(body.user_id, token)) {
+		if (body) {
+			const query = {
+				_id: new ObjectId(body._id),
+			};
+			const result = await GET_DB()
+				.collection(TASK_DATABASE_NAME)
+				.deleteOne(query);
+			if (result.deletedCount > 0) {
+				message = 'Delete Task Successfully';
+				handleMessage(message, response);
+			} else {
+				message = 'Task not found';
+				handleMessage(message, response);
+			}
+		} else {
+			message = 'Body not found';
+			handleMessage(message, response);
+		}
+	} else {
+		message = 'Token is not valid';
+		handleMessage(message, response);
+	}
 }
 
-// deleteMany
-// Doan
-async function deleteAllTasks (request, response) {
+async function deleteAllTasks(request, response) {
 	const token = checkAuthorizationHeaders(request);
-    let message = '';
-    const body = await getDataFromRequest(request);
-    if (await checkTokenIsValid(body.user_id, token)) {
-        if (body) {
-            const query = {
-                completed: body.completed
-            };
-            const result = await GET_DB()
-                .collection(TASK_DATABASE_NAME)
-                .deleteMany(query);     
-            if (result.deletedCount > 0) {
-                message = 'Delete All Undone Tasks Successfully';
-                handleMessage(message, response);
-            } else {
-                message = 'Task not found';
-                handleMessage(message, response);
-            }
-        } else {
-            message = 'Body not found';
-            handleMessage(message, response);
-        }
-    } else {
-        message = 'Token is not valid';
-        handleMessage(message, response);
-    }
-};
+	let message = '';
+	const body = await getDataFromRequest(request);
+	if (await checkTokenIsValid(body.user_id, token)) {
+		if (body) {
+			const query = {
+				completed: body.completed,
+			};
+			const result = await GET_DB()
+				.collection(TASK_DATABASE_NAME)
+				.deleteMany(query);
+			if (result.deletedCount > 0) {
+				message = 'Delete All Undone Tasks Successfully';
+				handleMessage(message, response);
+			} else {
+				message = 'Task not found';
+				handleMessage(message, response);
+			}
+		} else {
+			message = 'Body not found';
+			handleMessage(message, response);
+		}
+	} else {
+		message = 'Token is not valid';
+		handleMessage(message, response);
+	}
+}
 
 async function editTask(request, response) {
 	const token = checkAuthorizationHeaders(request);
@@ -174,8 +165,8 @@ async function toggleTask(request, response) {
 	if (await checkTokenIsValid(body.user_id, token)) {
 		if (body) {
 			const query = {
-				_id: new ObjectId(body._id)
-			}
+				_id: new ObjectId(body._id),
+			};
 			const queryUpdate = {
 				$set: { completed: body.completed },
 			};
