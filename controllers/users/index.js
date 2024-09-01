@@ -4,15 +4,15 @@ const {
 	getDataFromRequest,
 } = require('../../ultis/index.js');
 const { httpStatusCode, USER_DATABASE_NAME } = require('../../constants.js');
-const { GET_DB } = require('../../config/mongodb.js');
+const { GET_DB } = require('../../configs/mongodb.js');
 const { ObjectId } = require('mongodb');
 
 async function getUserById(request, response) {
-	// const user = await GET_DB()
-	// 	.collection(USER_DATABASE_NAME)
-	// 	.findOne({ email: 'vi.tien.huynh@udt.group' });
-	// response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
-	// response.end(JSON.stringify(user));
+	const user = await GET_DB()
+		.collection(USER_DATABASE_NAME)
+		.findOne({ email: 'vi.tien.huynh@udt.group' });
+	response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
+	response.end(JSON.stringify(user));
 }
 
 async function addUser(request, response) {
@@ -98,7 +98,6 @@ async function logoutUser(request, response) {
 		response.writeHead(httpStatusCode.OK, {
 			'Content-Type': 'application/json',
 		});
-		response.end(JSON.stringify(result));
 	} else {
 		message = 'User not found';
 		handleMessage(message, response);

@@ -4,7 +4,7 @@ const {
 	handleMessage,
 } = require('../../ultis/index.js');
 const { httpStatusCode, TASK_DATABASE_NAME } = require('../../constants.js');
-const { GET_DB } = require('../../config/mongodb.js');
+const { GET_DB } = require('../../configs/mongodb.js');
 const { checkTokenIsValid } = require('../users/index.js');
 const { ObjectId } = require('mongodb');
 
@@ -178,7 +178,6 @@ async function toggleTask(request, response) {
 				response.writeHead(httpStatusCode.OK, {
 					'Content-Type': 'application/json',
 				});
-				response.end(JSON.stringify(result));
 			} else {
 				message = 'Task not found';
 				handleMessage(message, response);

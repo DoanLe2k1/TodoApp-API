@@ -4,13 +4,13 @@ skinparam titleFontSize 60
 |Router|
 start
 repeat: Received request
-if (request.url === "/users/login"?) then (false)
+if (request.url === "/users/logout"?) then (false)
 :Response status code:
 **404 (NOT_FOUND)**;
 stop
 
 else (true)
-if (request.method === "PATCH"?) then (false)
+if (request.method === "DELETE"?) then (false)
 :Response status code:
 **405 (METHOD_NOT_ALLOWED)**;
 stop

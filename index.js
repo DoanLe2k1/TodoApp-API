@@ -1,5 +1,5 @@
 const { METHODS } = require('./constants.js');
-const router = require('./router/index.js');
+const router = require('./routers/index.js');
 const createServer = require('http').createServer;
 const port = 3000;
 

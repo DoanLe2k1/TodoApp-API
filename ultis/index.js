@@ -1,26 +1,22 @@
-const fs = require('fs');
 const { httpStatusCode } = require('../constants');
-const writeDataToFile = (fileName, data) => {
-	fs.writeFileSync(fileName, data, 'utf-8', (error) => console.log(error));
-};
 
-const getDataFromRequest = (req) => {
+function getDataFromRequest(request) {
 	return new Promise((resolve, reject) => {
 		let body = '';
-		req.on('data', (chunk) => {
+		request.on('data', (chunk) => {
 			body += chunk.toString();
 		});
-		req.on('end', () => {
+		request.on('end', () => {
 			resolve(JSON.parse(body));
 		});
 	});
-};
+}
 
-const generateUID = () => {
+function generateUID() {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2, 11);
-};
+}
 
-const checkAuthorizationHeaders = (request) => {
+function checkAuthorizationHeaders(request) {
 	const token = request.headers['authorization'];
 	if (!token) {
 		response.writeHead(httpStatusCode.UNAUTHORIZED, {
@@ -30,9 +26,9 @@ const checkAuthorizationHeaders = (request) => {
 	} else {
 		return token;
 	}
-};
+}
 
-const handleMessage = (message, response) => {
+function handleMessage(message, response) {
 	if (message === 'Add Success') {
 		response.writeHead(httpStatusCode.CREATED, {
 			'Content-Type': 'application/json',
@@ -78,18 +74,17 @@ const handleMessage = (message, response) => {
 			'Content-Type': 'application/json',
 		});
 		response.end(JSON.stringify(message));
-	} else if (message === "Delete All Tasks Successfully") {
+	} else if (message === 'Delete All Tasks Successfully') {
 		response.writeHead(httpStatusCode.NO_CONTENT, {
 			'Content-Type': 'application/json',
 		});
 		response.end(JSON.stringify(message));
-	} 
-};
+	}
+}
 
 module.exports = {
 	getDataFromRequest,
 	generateUID,
 	checkAuthorizationHeaders,
-	writeDataToFile,
 	handleMessage,
 };
