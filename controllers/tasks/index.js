@@ -103,16 +103,16 @@ async function deleteAllTasks(request, response) {
 	if (await checkTokenIsValid(body.user_id, token)) {
 		if (body) {
 			const query = {
-				completed: body.completed,
+				user_id: new ObjectId(body.user_id),
 			};
 			const result = await GET_DB()
 				.collection(TASK_DATABASE_NAME)
 				.deleteMany(query);
 			if (result.deletedCount > 0) {
-				message = 'Delete All Undone Tasks Successfully';
+				message = 'Delete All Tasks Successfully';
 				handleMessage(message, response);
 			} else {
-				message = 'Task not found';
+				message = 'User not found';
 				handleMessage(message, response);
 			}
 		} else {

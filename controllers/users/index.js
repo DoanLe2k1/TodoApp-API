@@ -16,7 +16,7 @@ async function getUserById(request, response) {
 }
 
 async function addUser(request, response) {
-	const body = await getBodyDataRequest(request);
+	const body = await getDataFromRequest(request);
 	let message = '';
 	const newUsertoAdd = {
 		...body,
@@ -45,7 +45,7 @@ async function checkTokenIsValid(user_id, token) {
 }
 
 async function loginUser(request, response) {
-	const body = await getBodyDataRequest(request);
+	const body = await getDataFromRequest(request);
 	let message = '';
 	if (body?.email && body?.password) {
 		const query = {
@@ -75,7 +75,7 @@ async function loginUser(request, response) {
 }
 
 async function logoutUser(request, response) {
-	const body = await getBodyDataRequest(request);
+	const body = await getDataFromRequest(request);
 	const token = request.headers['authorization'];
 	if (!token) {
 		response.writeHead(httpStatusCode.UNAUTHORIZED, {
