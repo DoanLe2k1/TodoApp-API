@@ -9,7 +9,7 @@ const { checkTokenIsValid } = require('../users/index.js');
 const { ObjectId } = require('mongodb');
 
 async function addTask(request, response) {
-	const token = checkAuthorizationHeaders(request);
+	const token = checkAuthorizationHeaders(request, response);
 	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
 		let body = await getDataFromRequest(request);
@@ -35,40 +35,34 @@ async function addTask(request, response) {
 	}
 }
 
-async function getTasks(request, response) {
-	const token = checkAuthorizationHeaders(request);
-	let body = await getDataFromRequest(request);
-	let message = '';
-	if (body) {
-		if (await checkTokenIsValid(body.id, token)) {
-			const query = {
-				user_id: new ObjectId(body.id),
-			};
-			const result = await GET_DB()
-				.collection(TASK_DATABASE_NAME)
-				.find(query)
-				.toArray();
-			if (result.length > 0) {
-				response.writeHead(httpStatusCode.OK, {
-					'Content-Type': 'application/json',
-				});
-				response.end(JSON.stringify(result));
-			} else {
-				message = 'Task not found';
-				handleMessage(message, response);
-			}
+async function getTasksById(request, response) {
+	const id = request.url.split('?id=')[1];
+	const token = checkAuthorizationHeaders(request, response);
+	if (await checkTokenIsValid(id, token)) {
+		const query = {
+			user_id: new ObjectId(id),
+		};
+		const result = await GET_DB()
+			.collection(TASK_DATABASE_NAME)
+			.find(query)
+			.toArray();
+		if (result.length > 0) {
+			response.writeHead(httpStatusCode.OK, {
+				'Content-Type': 'application/json',
+			});
+			response.end(JSON.stringify(result));
 		} else {
-			message = 'Token is not valid';
+			message = 'Task not found';
 			handleMessage(message, response);
 		}
 	} else {
-		message = 'Body not found';
+		message = 'Token is not valid';
 		handleMessage(message, response);
 	}
 }
 
 async function deleteTask(request, response) {
-	const token = checkAuthorizationHeaders(request);
+	const token = checkAuthorizationHeaders(request, response);
 	let message = '';
 	const body = await getDataFromRequest(request);
 	if (await checkTokenIsValid(body.user_id, token)) {
@@ -97,7 +91,7 @@ async function deleteTask(request, response) {
 }
 
 async function deleteAllTasks(request, response) {
-	const token = checkAuthorizationHeaders(request);
+	const token = checkAuthorizationHeaders(request, response);
 	let message = '';
 	const body = await getDataFromRequest(request);
 	if (await checkTokenIsValid(body.user_id, token)) {
@@ -126,7 +120,7 @@ async function deleteAllTasks(request, response) {
 }
 
 async function editTask(request, response) {
-	const token = checkAuthorizationHeaders(request);
+	const token = checkAuthorizationHeaders(request, response);
 	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
 		let body = await getDataFromRequest(request);
@@ -159,7 +153,7 @@ async function editTask(request, response) {
 }
 
 async function toggleTask(request, response) {
-	const token = checkAuthorizationHeaders(request);
+	const token = checkAuthorizationHeaders(request, response);
 	let body = await getDataFromRequest(request);
 	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
@@ -194,7 +188,7 @@ async function toggleTask(request, response) {
 
 module.exports = {
 	addTask,
-	getTasks,
+	getTasksById,
 	deleteTask,
 	editTask,
 	toggleTask,

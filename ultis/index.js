@@ -16,7 +16,7 @@ function generateUID() {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2, 11);
 }
 
-function checkAuthorizationHeaders(request) {
+function checkAuthorizationHeaders(request, response) {
 	const token = request.headers['authorization'];
 	if (!token) {
 		response.writeHead(httpStatusCode.UNAUTHORIZED, {

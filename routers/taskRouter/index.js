@@ -3,15 +3,15 @@ var routerMethods = require('../methods.js');
 var routes = require('../routes.js');
 const {
 	addTask,
-	getTasks,
 	deleteTask,
 	deleteAllTasks,
 	editTask,
 	toggleTask,
+	getTasksById,
 } = require('../../controllers/tasks/index.js');
 var taskRouter = {
 	run(request, response) {
-		routerMethods.post(request, response, routes.task.getTasks.value, getTasks);
+		routerMethods.get(request, response, routes.task.value, getTasksById);
 		routerMethods.post(request, response, routes.task.value, addTask);
 		routerMethods.delete(request, response, routes.task.value, deleteTask);
 		routerMethods.delete(
