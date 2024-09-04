@@ -10,9 +10,9 @@ const { ObjectId } = require('mongodb');
 
 async function addTask(request, response) {
 	const token = checkAuthorizationHeaders(request, response);
+	let body = await getDataFromRequest(request);
 	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
-		let body = await getDataFromRequest(request);
 		if (body) {
 			const newTaskToAdd = {
 				...body,
@@ -63,8 +63,8 @@ async function getTasksById(request, response) {
 
 async function deleteTask(request, response) {
 	const token = checkAuthorizationHeaders(request, response);
-	let message = '';
 	const body = await getDataFromRequest(request);
+	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
 		if (body) {
 			const query = {
@@ -92,8 +92,8 @@ async function deleteTask(request, response) {
 
 async function deleteAllTasks(request, response) {
 	const token = checkAuthorizationHeaders(request, response);
-	let message = '';
 	const body = await getDataFromRequest(request);
+	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
 		if (body) {
 			const query = {
@@ -121,9 +121,9 @@ async function deleteAllTasks(request, response) {
 
 async function editTask(request, response) {
 	const token = checkAuthorizationHeaders(request, response);
+	const body = await getDataFromRequest(request);
 	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
-		let body = await getDataFromRequest(request);
 		if (body) {
 			const query = {
 				_id: new ObjectId(body._id),
@@ -154,7 +154,7 @@ async function editTask(request, response) {
 
 async function toggleTask(request, response) {
 	const token = checkAuthorizationHeaders(request, response);
-	let body = await getDataFromRequest(request);
+	const body = await getDataFromRequest(request);
 	let message = '';
 	if (await checkTokenIsValid(body.user_id, token)) {
 		if (body) {
@@ -169,9 +169,10 @@ async function toggleTask(request, response) {
 				.collection(TASK_DATABASE_NAME)
 				.findOneAndUpdate(query, queryUpdate, options);
 			if (result) {
-				response.writeHead(httpStatusCode.OK, {
+				response.writeHead(httpStatusCode.NO_CONTENT, {
 					'Content-Type': 'application/json',
 				});
+				response.end();
 			} else {
 				message = 'Task not found';
 				handleMessage(message, response);
