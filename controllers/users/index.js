@@ -8,9 +8,10 @@ const { GET_DB } = require('../../configs/mongodb.js');
 const { ObjectId } = require('mongodb');
 
 async function getUserById(request, response) {
+	const id = request.url.split('?id=')[1];
 	const user = await GET_DB()
 		.collection(USER_DATABASE_NAME)
-		.findOne({ email: 'vi.tien.huynh@udt.group' });
+		.findOne({ _id: new ObjectId(id) });
 	response.writeHead(httpStatusCode.OK, { 'Content-Type': 'application/json' });
 	response.end(JSON.stringify(user));
 }
