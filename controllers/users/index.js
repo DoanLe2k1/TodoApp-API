@@ -1,8 +1,4 @@
-const {
-	generateUID,
-	handleMessage,
-	getDataFromRequest,
-} = require('../../ultis/index.js');
+const { generateUID, handleMessage, getDataFromRequest } = require('../../ultis/index.js');
 const { httpStatusCode, USER_DATABASE_NAME } = require('../../constants.js');
 const { GET_DB } = require('../../configs/mongodb.js');
 const { ObjectId } = require('mongodb');
@@ -22,9 +18,7 @@ async function addUser(request, response) {
 	const newUsertoAdd = {
 		...body,
 	};
-	const newUser = await GET_DB()
-		.collection(USER_DATABASE_NAME)
-		.insertOne(newUsertoAdd);
+	const newUser = await GET_DB().collection(USER_DATABASE_NAME).insertOne(newUsertoAdd);
 	if (newUser) {
 		message = 'Add Success';
 		handleMessage(message, response);
@@ -53,20 +47,19 @@ async function loginUser(request, response) {
 			email: body.email,
 			password: body.password,
 		};
-		const queryUpdate = {
-			$set: { token: generateUID() },
-		};
-		const options = {
-			returnDocument: 'after',
-			upsert: true,
-		};
-		const result = await GET_DB()
-			.collection(USER_DATABASE_NAME)
-			.findOneAndUpdate(query, queryUpdate, options);
-		if (result) {
-			response.writeHead(httpStatusCode.OK, {
-				'Content-Type': 'application/json',
-			});
+		const resultUserExisted = await GET_DB().collection(USER_DATABASE_NAME).findOne(query);
+		if (resultUserExisted) {
+			const queryUpdate = {
+				$set: { token: generateUID() },
+			};
+			const options = {
+				returnDocument: 'after',
+				upsert: true,
+			};
+			const result = await GET_DB()
+				.collection(USER_DATABASE_NAME)
+				.findOneAndUpdate(query, queryUpdate, options);
+
 			response.end(JSON.stringify(result));
 		} else {
 			message = 'User not found';
